@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bayesian Fermi Estimation</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
+</head>
+
+<body>
+    <div class="app-container">
+        <header>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1>Bayesian Fermi Estimation</h1>
+                    <p>Design and calculate probabilistic estimations.</p>
+                </div>
+                <button id="help-btn" class="btn secondary">Help / Walkthrough</button>
+            </div>
+        </header>
+
+        <main>
+            <section class="workspace">
+                <div class="toolbar">
+                    <button id="add-variable-btn" class="btn primary">+ Add Variable</button>
+                    <button id="load-example-btn" class="btn secondary">Load Example</button>
+                    <button id="save-btn" class="btn secondary">Save Model</button>
+                    <button id="load-btn" class="btn secondary">Load Model</button>
+                    <input type="file" id="file-input" accept=".json" style="display: none;">
+                    <button id="run-simulation-btn" class="btn accent">Run Simulation</button>
+                    <button id="reset-btn" class="btn secondary">Reset</button>
+                </div>
+                <div id="variables-container">
+                    <!-- Variable cards will go here -->
+                </div>
+            </section>
+
+            <section class="results">
+                <div class="results-card">
+                    <h2>Results</h2>
+                    <canvas id="results-chart"></canvas>
+                    <div id="stats-container">
+                        <div class="stat-box">
+                            <span class="stat-label">Mean</span>
+                            <span class="stat-value" id="stat-mean">-</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-label">Median</span>
+                            <span class="stat-value" id="stat-median">-</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-label">90% CI</span>
+                            <span class="stat-value" id="stat-ci">-</span>
+                        </div>
+                    </div>
+                    <button id="download-csv-btn" class="btn primary" style="margin-top: 1rem; width: 100%;"
+                        disabled>Download CSV</button>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>

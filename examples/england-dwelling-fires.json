@@ -1,0 +1,45 @@
+[
+  {
+    "id": "var_1763809760163",
+    "name": "EnglandPopulation",
+    "type": "LogNormal",
+    "params": {
+      "low": 55000000,
+      "high": 59000000
+    }
+  },
+  {
+    "id": "var_1763809810605",
+    "name": "NumPeoplePerDwelling",
+    "type": "LogNormal",
+    "params": {
+      "low": 1,
+      "high": 4
+    }
+  },
+  {
+    "id": "var_1763809839522",
+    "name": "RateOfDwellingFires",
+    "type": "Normal",
+    "params": {
+      "mean": 0.001,
+      "stdDev": 0.001
+    }
+  },
+  {
+    "id": "var_1763809860154",
+    "name": "NumDwellings",
+    "type": "Formula",
+    "params": {
+      "expression": "EnglandPopulation / NumPeoplePerDwelling"
+    }
+  },
+  {
+    "id": "var_1763809908491",
+    "name": "NumDwellingFires",
+    "type": "Formula",
+    "params": {
+      "expression": "NumDwellings * RateOfDwellingFires"
+    }
+  }
+]

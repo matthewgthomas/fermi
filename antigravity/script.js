@@ -362,7 +362,7 @@ function updateResults(data) {
     document.getElementById('stat-median').textContent = formatNumber(median);
     document.getElementById('stat-ci').textContent = `${formatNumber(p05)} - ${formatNumber(p95)}`;
 
-    renderChart(validData);
+    renderChart(validData, p05, p95);
 }
 
 function formatNumber(num) {
@@ -374,7 +374,7 @@ function formatNumber(num) {
 
 let chartInstance = null;
 
-function renderChart(data) {
+function renderChart(data, p05, p95) {
     const ctx = document.getElementById('results-chart').getContext('2d');
 
     // Create histogram bins
@@ -400,6 +400,10 @@ function renderChart(data) {
         chartInstance.destroy();
     }
 
+    const inkColor = '#264653';
+    const tealColor = 'rgba(42, 157, 143, 0.7)';
+    const mustardColor = 'rgba(233, 196, 106, 0.9)';
+
     chartInstance = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -407,9 +411,14 @@ function renderChart(data) {
             datasets: [{
                 label: 'Frequency',
                 data: bins,
-                backgroundColor: 'rgba(59, 130, 246, 0.5)',
-                borderColor: 'rgba(59, 130, 246, 1)',
-                borderWidth: 1
+                backgroundColor: labels.map((l, i) => {
+                    const val = min + (i + 0.5) * binWidth;
+                    return (val >= p05 && val <= p95) ? mustardColor : tealColor;
+                }),
+                borderColor: inkColor,
+                borderWidth: 1,
+                barPercentage: 1.0,
+                categoryPercentage: 1.0
             }]
         },
         options: {
@@ -418,6 +427,9 @@ function renderChart(data) {
             plugins: {
                 legend: { display: false },
                 tooltip: {
+                    backgroundColor: inkColor,
+                    titleFont: { family: 'Courier Prime' },
+                    bodyFont: { family: 'Courier Prime' },
                     callbacks: {
                         title: (items) => `Value: ${items[0].label}`
                     }
@@ -427,15 +439,19 @@ function renderChart(data) {
                 x: {
                     ticks: {
                         maxTicksLimit: 10,
-                        color: '#94a3b8'
+                        color: inkColor,
+                        font: { family: 'Courier Prime' }
                     },
-                    grid: { color: '#334155' }
+                    grid: { display: false },
+                    border: { display: true, color: inkColor }
                 },
                 y: {
-                    ticks: { color: '#94a3b8' },
-                    grid: { color: '#334155' }
+                    ticks: { display: false },
+                    grid: { display: false },
+                    border: { display: false }
                 }
-            }
+            },
+            animation: { duration: 0 }
         }
     });
 }

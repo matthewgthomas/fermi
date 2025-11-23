@@ -105,6 +105,9 @@ main {
     background-color: white;
     color: var(--color-ink);
     transform: translate(0, 0);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .btn:hover {

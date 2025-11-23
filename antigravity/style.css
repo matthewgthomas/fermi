@@ -289,16 +289,20 @@ main {
     flex-shrink: 0;
 }
 
-#results-chart {
-    flex: 1;
-    min-height: 200px;
-    /* Minimum height for readability */
-    max-height: none;
-    /* Allow it to fill available space */
+.chart-container {
+    position: relative;
+    height: 250px;
+    /* Fixed height for consistency */
+    width: 100%;
     margin-bottom: 1rem;
     border: 2px solid var(--color-ink);
     background-color: white;
     padding: 0.5rem;
+}
+
+#results-chart {
+    width: 100% !important;
+    height: 100% !important;
 }
 
 #stats-container {
@@ -433,5 +437,10 @@ main {
 
     .param-input {
         width: 100%;
+    }
+
+    .results-card {
+        height: auto;
+        overflow: visible;
     }
 }

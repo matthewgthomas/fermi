@@ -378,7 +378,7 @@ function renderChart(data, p05, p95) {
     const ctx = document.getElementById('results-chart').getContext('2d');
 
     // Create histogram bins
-    const binCount = 50;
+    const binCount = 30; // Reduced from 50 for better visibility
     const min = data[0];
     const max = data[data.length - 1];
     const binWidth = (max - min) / binCount;
@@ -417,7 +417,7 @@ function renderChart(data, p05, p95) {
                 }),
                 borderColor: inkColor,
                 borderWidth: 1,
-                barPercentage: 1.0,
+                barPercentage: 0.9, // Slight gap between bars
                 categoryPercentage: 1.0
             }]
         },
@@ -428,8 +428,8 @@ function renderChart(data, p05, p95) {
                 legend: { display: false },
                 tooltip: {
                     backgroundColor: inkColor,
-                    titleFont: { family: 'Courier Prime' },
-                    bodyFont: { family: 'Courier Prime' },
+                    titleFont: { family: 'Courier Prime', size: 14 },
+                    bodyFont: { family: 'Courier Prime', size: 14 },
                     callbacks: {
                         title: (items) => `Value: ${items[0].label}`
                     }
@@ -438,17 +438,35 @@ function renderChart(data, p05, p95) {
             scales: {
                 x: {
                     ticks: {
-                        maxTicksLimit: 10,
+                        maxTicksLimit: 8,
                         color: inkColor,
-                        font: { family: 'Courier Prime' }
+                        font: { family: 'Courier Prime', size: 12, weight: 'bold' },
+                        padding: 8,
+                        maxRotation: 0,
+                        autoSkip: true
                     },
                     grid: { display: false },
-                    border: { display: true, color: inkColor }
+                    border: { display: true, color: inkColor, width: 2 }
                 },
                 y: {
-                    ticks: { display: false },
-                    grid: { display: false },
+                    ticks: {
+                        display: true,
+                        color: inkColor,
+                        font: { family: 'Courier Prime', size: 12, weight: 'bold' },
+                        padding: 8
+                    },
+                    grid: {
+                        display: true,
+                        color: 'rgba(38, 70, 83, 0.1)',
+                        drawBorder: false
+                    },
                     border: { display: false }
+                }
+            },
+            layout: {
+                padding: {
+                    bottom: 10,
+                    left: 5
                 }
             },
             animation: { duration: 0 }

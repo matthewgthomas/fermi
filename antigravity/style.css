@@ -256,11 +256,12 @@ main {
     background-color: white;
     border: 2px solid var(--color-ink);
     color: var(--color-ink);
-    padding: 0.4rem;
+    padding: 0.5rem;
     border-radius: 0;
     width: 100px;
     font-family: var(--font-mono);
     font-weight: bold;
+    font-size: 0.9rem;
 }
 
 .param-input:focus {

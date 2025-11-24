@@ -134,14 +134,17 @@ function createVariableCard(variable) {
             <button class="remove-btn" onclick="removeVariable('${variable.id}')">&times;</button>
         </div>
         <div class="card-body">
-            <select class="type-select" onchange="updateVariableType('${variable.id}', this.value)">
-                <option value="Normal" ${variable.type === 'Normal' ? 'selected' : ''}>Bell Curve (Normal)</option>
-                <option value="Uniform" ${variable.type === 'Uniform' ? 'selected' : ''}>Simple Range (Uniform)</option>
-                <option value="LogNormal" ${variable.type === 'LogNormal' ? 'selected' : ''}>Estimated Range (90% CI)</option>
-                <option value="PERT" ${variable.type === 'PERT' ? 'selected' : ''}>Three-Point Estimate (PERT)</option>
-                <option value="Constant" ${variable.type === 'Constant' ? 'selected' : ''}>Constant</option>
-                <option value="Formula" ${variable.type === 'Formula' ? 'selected' : ''}>Formula</option>
-            </select>
+            <div class="param-group">
+                <label>What type of variable?</label>
+                <select class="type-select" onchange="updateVariableType('${variable.id}', this.value)">
+                    <option value="Normal" ${variable.type === 'Normal' ? 'selected' : ''}>Bell Curve (Normal)</option>
+                    <option value="Uniform" ${variable.type === 'Uniform' ? 'selected' : ''}>Simple Range (Uniform)</option>
+                    <option value="LogNormal" ${variable.type === 'LogNormal' ? 'selected' : ''}>Estimated Range (90% CI)</option>
+                    <option value="PERT" ${variable.type === 'PERT' ? 'selected' : ''}>Three-Point Estimate (PERT)</option>
+                    <option value="Constant" ${variable.type === 'Constant' ? 'selected' : ''}>Constant</option>
+                    <option value="Formula" ${variable.type === 'Formula' ? 'selected' : ''}>Formula</option>
+                </select>
+            </div>
             <div class="params-container" id="params-${variable.id}">
                 ${renderParams(variable)}
             </div>

@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Fermi: Estimation Protocol</title>
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Math.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
+    
+    <!-- Google Fonts: DM Sans (Headers) and Courier Prime (Data) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=DM+Sans:wght@400;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --color-bg: #F9F7F1;
+            --color-ink: #264653;
+            --color-teal: #2A9D8F;
+            --color-mustard: #E9C46A;
+            --color-orange: #E76F51;
+            --color-paper: #FFFDF9;
+        }
+
+        body { 
+            background-color: var(--color-bg); 
+            color: var(--color-ink); 
+            font-family: 'DM Sans', sans-serif;
+            background-image: radial-gradient(#E5E5E5 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        h1, h2, h3 { font-weight: 700; letter-spacing: -0.5px; }
+
+        /* Retro Card Style: Thick border, Hard shadow */
+        .retro-card { 
+            background: var(--color-paper); 
+            border: 2px solid var(--color-ink); 
+            box-shadow: 6px 6px 0px 0px var(--color-ink); 
+            border-radius: 4px;
+        }
+
+        /* Retro Input Style: Typewriter feel */
+        .retro-input {
+            font-family: 'Courier Prime', monospace;
+            background-color: #F0EFEB;
+            border: 2px solid transparent;
+            border-bottom: 2px solid var(--color-ink);
+            transition: all 0.2s;
+        }
+        .retro-input:focus {
+            background-color: #fff;
+            border: 2px solid var(--color-teal);
+            outline: none;
+        }
+
+        /* Retro Button: Clicky feel */
+        .retro-btn {
+            border: 2px solid var(--color-ink);
+            box-shadow: 3px 3px 0px 0px var(--color-ink);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.1s;
+            transform: translate(0, 0);
+        }
+        .retro-btn:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 4px 4px 0px 0px var(--color-ink);
+        }
+        .retro-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0px 0px var(--color-ink);
+        }
+
+        .font-mono { font-family: 'Courier Prime', monospace; }
+    </style>
+</head>
+<body class="py-10 px-4">
+
+    <div class="max-w-6xl mx-auto">
+        
+        <!-- Header: Styled like a Classified Document -->
+        <header class="mb-10 text-center border-b-4 border-[#264653] pb-6 relative">
+            <!--
+            <div class="absolute top-0 left-0 border-2 border-[#264653] px-2 py-1 text-xs font-bold uppercase tracking-widest bg-[#E76F51] text-white transform -rotate-6">
+                Top Secret
+            </div>
+            -->
+            <h1 class="text-5xl font-black text-[#264653] mb-2 uppercase tracking-tight">Bayesian Fermi</h1>
+            <p class="text-[#2A9D8F] font-mono text-lg font-bold">/// PROBABILISTIC ESTIMATION ///</p>
+        </header>
+
+        <!-- Toolbar -->
+        <div class="flex flex-wrap justify-end gap-4 mb-8">
+            <!-- Load Example Button -->
+            <button onclick="loadExample()" class="retro-btn bg-[#264653] text-white px-4 py-2 flex items-center text-sm">
+                <svg class="w-4 h-4 mr-2 text-[#E9C46A]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                Load Example: Piano Tuners
+            </button>
+
+            <div class="w-px bg-[#264653] mx-2 opacity-50"></div>
+
+            <button onclick="saveModel()" class="retro-btn bg-white text-[#264653] px-4 py-2 flex items-center text-sm">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+                Save Data
+            </button>
+            
+            <button onclick="document.getElementById('file-input').click()" class="retro-btn bg-white text-[#264653] px-4 py-2 flex items-center text-sm">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                Load Data
+            </button>
+            <input type="file" id="file-input" class="hidden" accept=".json" onchange="loadModel(this)">
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- Left Column: Inputs (Takes up 4 columns) -->
+            <div class="lg:col-span-4 space-y-8">
+                
+                <!-- Variable Builder -->
+                <div class="retro-card p-6 relative">
+                    <div class="absolute -top-3 left-4 bg-[#F9F7F1] px-2 border-2 border-[#264653] text-xs font-bold uppercase tracking-widest text-[#264653]">
+                        Step 1: Parameters
+                    </div>
+
+                    <div id="variables-container" class="space-y-6 mt-2">
+                        <!-- Variables injected here -->
+                    </div>
+                    
+                    <button onclick="addVariable()" class="mt-6 w-full retro-btn bg-[#E9C46A] text-[#264653] py-2 border-dashed">
+                        + Add Variable
+                    </button>
+                </div>
+
+                <!-- Formula Builder -->
+                <div class="retro-card p-6 relative">
+                    <div class="absolute -top-3 left-4 bg-[#F9F7F1] px-2 border-2 border-[#264653] text-xs font-bold uppercase tracking-widest text-[#264653]">
+                        Step 2: Logic
+                    </div>
+
+                    <p class="text-xs font-mono text-[#2A9D8F] mb-2 uppercase">Input Formula Sequence:</p>
+                    <input type="text" id="formula-input" placeholder="visitors * rate" class="w-full p-3 retro-input text-lg font-bold text-[#264653]">
+                    
+                    <button onclick="runSimulation()" class="mt-6 w-full retro-btn bg-[#E76F51] text-white py-3 text-xl">
+                        COMPUTE
+                    </button>
+                    <p id="error-msg" class="font-mono text-[#E76F51] text-xs mt-2 hidden border border-[#E76F51] p-2 bg-[#FFEFEA]"></p>
+                </div>
+
+            </div>
+
+            <!-- Right Column: Results (Takes up 8 columns) -->
+            <div class="lg:col-span-8">
+                <div class="retro-card p-8 min-h-[600px] relative flex flex-col">
+                     <div class="absolute -top-3 left-4 bg-[#F9F7F1] px-2 border-2 border-[#264653] text-xs font-bold uppercase tracking-widest text-[#264653]">
+                        Step 3: Analysis
+                    </div>
+
+                    <!-- Results Header -->
+                    <div class="flex justify-between items-end border-b-2 border-[#264653] pb-4 mb-6 border-dashed">
+                        <h2 class="text-2xl font-bold uppercase text-[#264653]">Posterior Distribution</h2>
+                        <button id="btn-download-csv" onclick="downloadCSV()" class="hidden retro-btn bg-[#2A9D8F] text-white px-3 py-1 text-xs">
+                            Download Tape (.csv)
+                        </button>
+                    </div>
+                    
+                    <div id="results-placeholder" class="flex flex-col items-center justify-center flex-grow text-gray-400 opacity-50">
+                        <div class="border-2 border-gray-400 rounded-full p-6 mb-4">
+                            <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                        </div>
+                        <p class="font-mono uppercase tracking-widest">Awaiting Data Input...</p>
+                    </div>
+
+                    <div id="results-content" class="hidden flex-grow flex flex-col">
+                        <!-- Stats "Stamps" -->
+                        <div class="grid grid-cols-3 gap-6 mb-8">
+                            <div class="border-2 border-[#264653] p-4 bg-[#F0EFEB] text-center relative group">
+                                <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-[#264653] text-white px-2 text-[10px] font-mono uppercase">Pessimistic (P5)</div>
+                                <div class="text-2xl font-mono font-bold text-[#264653]" id="stat-p5">-</div>
+                            </div>
+                            <div class="border-2 border-[#2A9D8F] p-4 bg-[#E0F2F1] text-center relative shadow-[4px_4px_0px_0px_#2A9D8F]">
+                                <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-[#2A9D8F] text-white px-2 text-[10px] font-mono uppercase">Likely (Median)</div>
+                                <div class="text-3xl font-mono font-bold text-[#264653]" id="stat-median">-</div>
+                            </div>
+                            <div class="border-2 border-[#264653] p-4 bg-[#F0EFEB] text-center relative">
+                                <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-[#264653] text-white px-2 text-[10px] font-mono uppercase">Optimistic (P95)</div>
+                                <div class="text-2xl font-mono font-bold text-[#264653]" id="stat-p95">-</div>
+                            </div>
+                        </div>
+
+                        <!-- Chart -->
+                        <div class="relative flex-grow w-full min-h-[300px] border-2 border-[#264653] border-dashed bg-white p-2">
+                            <canvas id="resultsChart"></canvas>
+                        </div>
+                        
+                        <p class="text-[10px] font-mono text-[#264653] mt-2 text-right uppercase tracking-widest opacity-60">
+                            n = 10,000 Iterations // Monte Carlo Method
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!--
+        <footer class="mt-12 text-center text-[#264653] opacity-50 font-mono text-xs">
+             CLASSIFIED: FOR INTERNAL USE ONLY
+        </footer>
+        -->
+    </div>
+
+    <script>
+        let chartInstance = null;
+        let simulationResults = [];
+
+        function init() {
+            // Default state
+            addVariable('visitors', 'range', null, null);
+        }
+
+        // --- Load Example Logic ---
+        function loadExample() {
+            document.getElementById('variables-container').innerHTML = '';
+
+            // Piano Tuners in Chicago Example
+            addVariable('population', 'range', 2500000, 3000000);
+            addVariable('ppl_per_home', 'range', 2, 3);
+            addVariable('piano_share', 'proportion', 5); 
+            addVariable('tunes_per_yr', 'range', 0.5, 1); 
+            addVariable('tuner_capacity', 'range', 750, 1000);
+
+            const formula = "(population / ppl_per_home) * piano_share * tunes_per_yr / tuner_capacity";
+            document.getElementById('formula-input').value = formula;
+
+            runSimulation();
+        }
+
+        function addVariable(nameVal = '', typeVal = 'range', p1Val = null, p2Val = null) {
+            const id = Date.now() + Math.floor(Math.random() * 1000);
+            const container = document.getElementById('variables-container');
+            const div = document.createElement('div');
+            div.className = 'border-l-4 border-[#2A9D8F] pl-3 py-2 relative variable-card bg-white';
+            div.id = `var-${id}`;
+            div.innerHTML = `
+                <button onclick="removeVariable(${id})" class="absolute top-0 right-0 text-[#E76F51] hover:text-red-700 font-bold text-2xl leading-none pr-1">&times;</button>
+                <div class="flex flex-col gap-3">
+                    <div class="flex gap-2">
+                        <div class="w-1/2">
+                            <label class="block text-[10px] font-bold text-[#264653] uppercase tracking-wider mb-1">Identifier</label>
+                            <input type="text" class="var-name w-full p-1 retro-input text-sm text-[#264653] font-bold" placeholder="name" value="${nameVal}">
+                        </div>
+                        <div class="w-1/2">
+                            <label class="block text-[10px] font-bold text-[#264653] uppercase tracking-wider mb-1">Distribution</label>
+                            <select class="var-type w-full p-1 retro-input text-sm bg-transparent cursor-pointer" onchange="updateInputs(${id})">
+                                <option value="range" ${typeVal === 'range' ? 'selected' : ''}>Range (LogNormal 90%)</option>
+                                <option value="uniform" ${typeVal === 'uniform' ? 'selected' : ''}>Range (Uniform)</option>
+                                <option value="proportion" ${typeVal === 'proportion' ? 'selected' : ''}>Proportion (%)</option>
+                                <option value="constant" ${typeVal === 'constant' ? 'selected' : ''}>Constant (Fixed)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="var-inputs grid grid-cols-2 gap-4">
+                        <!-- Dynamic inputs go here -->
+                    </div>
+                </div>
+            `;
+            container.appendChild(div);
+            updateInputs(id);
+
+            const el = document.getElementById(`var-${id}`);
+            if (p1Val !== null) el.querySelector('.param-1').value = p1Val;
+            if (p2Val !== null && el.querySelector('.param-2')) el.querySelector('.param-2').value = p2Val;
+        }
+
+        function removeVariable(id) {
+            document.getElementById(`var-${id}`).remove();
+        }
+
+        function updateInputs(id) {
+            const el = document.getElementById(`var-${id}`);
+            const type = el.querySelector('.var-type').value;
+            const inputContainer = el.querySelector('.var-inputs');
+            inputContainer.innerHTML = '';
+
+            const labelClass = "block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1";
+            const inputClass = "p-1 w-full retro-input text-sm";
+
+            if (type === 'range') {
+                inputContainer.innerHTML = `
+                    <div><label class="${labelClass}">Min (Low)</label><input type="number" class="${inputClass} param-1"></div>
+                    <div><label class="${labelClass}">Max (High)</label><input type="number" class="${inputClass} param-2"></div>
+                `;
+            } else if (type === 'uniform') {
+                inputContainer.innerHTML = `
+                    <div><label class="${labelClass}">Min (Flat)</label><input type="number" class="${inputClass} param-1"></div>
+                    <div><label class="${labelClass}">Max (Flat)</label><input type="number" class="${inputClass} param-2"></div>
+                `;
+            } else if (type === 'proportion') {
+                inputContainer.innerHTML = `
+                    <div class="col-span-2"><label class="${labelClass}">Best Guess (%)</label><input type="number" max="100" min="0" class="${inputClass} param-1" placeholder="e.g. 25"></div>
+                `;
+            } else if (type === 'constant') {
+                inputContainer.innerHTML = `
+                    <div class="col-span-2"><label class="${labelClass}">Fixed Value</label><input type="number" class="${inputClass} param-1"></div>
+                `;
+            }
+        }
+
+        // --- Simulation Logic ---
+        function getModelState() {
+            const varNodes = document.querySelectorAll('.variable-card');
+            const variables = [];
+            varNodes.forEach(node => {
+                const name = node.querySelector('.var-name').value.trim();
+                const type = node.querySelector('.var-type').value;
+                const p1 = node.querySelector('.param-1') ? parseFloat(node.querySelector('.param-1').value) : null;
+                const p2 = node.querySelector('.param-2') ? parseFloat(node.querySelector('.param-2').value) : null;
+                if(name) variables.push({ name, type, p1, p2 });
+            });
+            const formula = document.getElementById('formula-input').value;
+            return { variables, formula };
+        }
+
+        function saveModel() {
+            const state = getModelState();
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "project_fermi_data.json");
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+
+        function loadModel(inputElement) {
+            const file = inputElement.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const state = JSON.parse(e.target.result);
+                    if (!state.variables || !Array.isArray(state.variables)) throw new Error("Invalid file format");
+                    document.getElementById('variables-container').innerHTML = '';
+                    state.variables.forEach(v => addVariable(v.name, v.type, v.p1, v.p2));
+                    document.getElementById('formula-input').value = state.formula || "";
+                    inputElement.value = ''; 
+                    document.getElementById('results-content').classList.add('hidden');
+                    document.getElementById('results-placeholder').classList.remove('hidden');
+                    document.getElementById('btn-download-csv').classList.add('hidden');
+                } catch (err) {
+                    alert("Error loading file: " + err.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function downloadCSV() {
+            if (!simulationResults || simulationResults.length === 0) {
+                alert("No data generated.");
+                return;
+            }
+            let csvContent = "Simulation_Draw_Value\n" + simulationResults.join("\n");
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", "fermi_simulation_tape.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Math Helpers
+        function randomNormal(mean, stdev) {
+            let u = 0, v = 0;
+            while(u === 0) u = Math.random();
+            while(v === 0) v = Math.random();
+            return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v) * stdev + mean;
+        }
+
+        function sampleLogNormal(min, max) {
+            const logMin = Math.log(min);
+            const logMax = Math.log(max);
+            const mean = (logMin + logMax) / 2;
+            const stdDev = (logMax - logMin) / 3.29; 
+            return Math.exp(randomNormal(mean, stdDev));
+        }
+
+        function sampleUniform(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        function sampleBeta(percentage) {
+            const p = percentage / 100;
+            const weight = 50; 
+            const alpha = p * weight;
+            const beta = (1 - p) * weight;
+            const randGamma = (k) => Math.max(0, randomNormal(k, Math.sqrt(k))); 
+            const a = randGamma(alpha);
+            const b = randGamma(beta);
+            return a / (a + b);
+        }
+
+        function getVariableValue(v) {
+            if (v.type === 'constant') return v.p1;
+            if (v.type === 'range') return sampleLogNormal(v.p1, v.p2);
+            if (v.type === 'uniform') return sampleUniform(v.p1, v.p2);
+            if (v.type === 'proportion') return sampleBeta(v.p1);
+            return 0;
+        }
+
+        function runSimulation() {
+            const errorMsg = document.getElementById('error-msg');
+            errorMsg.classList.add('hidden');
+            const state = getModelState();
+            
+            try {
+                if (state.variables.length === 0) throw new Error("No variables defined.");
+                state.variables.forEach(v => {
+                    if (isNaN(v.p1)) throw new Error(`Invalid value for ${v.name}`);
+                    if ((v.type === 'range' || v.type === 'uniform') && isNaN(v.p2)) throw new Error(`Invalid Max value for ${v.name}`);
+                });
+                if (!state.formula) throw new Error("Formula required.");
+
+                const compiledCode = math.compile(state.formula);
+                const results = [];
+                const iterations = 10000;
+
+                for (let i = 0; i < iterations; i++) {
+                    const scope = {};
+                    state.variables.forEach(v => scope[v.name] = getVariableValue(v));
+                    const res = compiledCode.evaluate(scope);
+                    if (isFinite(res)) results.push(res);
+                }
+
+                if (results.length === 0) throw new Error("Computation Error.");
+                simulationResults = [...results];
+                results.sort((a, b) => a - b);
+                
+                const p5 = results[Math.floor(iterations * 0.05)];
+                const median = results[Math.floor(iterations * 0.50)];
+                const p95 = results[Math.floor(iterations * 0.95)];
+
+                document.getElementById('results-placeholder').classList.add('hidden');
+                document.getElementById('results-content').classList.remove('hidden');
+                document.getElementById('btn-download-csv').classList.remove('hidden');
+
+                // Text formatting for stats cards
+                const fmt = (n) => {
+                    if (Math.abs(n) < 1 && Math.abs(n) > 0) return parseFloat(n.toFixed(4));
+                    return n > 1000 ? n.toLocaleString(undefined, {maximumFractionDigits:0}) : n.toLocaleString(undefined, {maximumFractionDigits:2});
+                };
+
+                document.getElementById('stat-p5').innerText = fmt(p5);
+                document.getElementById('stat-median').innerText = fmt(median);
+                document.getElementById('stat-p95').innerText = fmt(p95);
+
+                renderChart(results, p5, p95);
+            } catch (e) {
+                errorMsg.innerText = "ERROR: " + e.message;
+                errorMsg.classList.remove('hidden');
+            }
+        }
+
+        function renderChart(data, p5, p95) {
+            const ctx = document.getElementById('resultsChart').getContext('2d');
+            const binCount = 40;
+            const min = data[0];
+            const max = data[data.length-1];
+            const range = max - min;
+            const binSize = range / binCount;
+            
+            const bins = new Array(binCount).fill(0);
+            data.forEach(val => {
+                let idx = Math.floor((val - min) / binSize);
+                if (idx >= binCount) idx = binCount - 1;
+                bins[idx]++;
+            });
+
+            // Label Formatting Logic
+            const formatAxisLabel = (num) => {
+                if (num === 0) return "0";
+                let abs = Math.abs(num);
+                
+                // Case: Billions
+                if (abs >= 1.0e9) return (num / 1.0e9).toLocaleString(undefined, {maximumFractionDigits:1}) + "B";
+                // Case: Millions
+                if (abs >= 1.0e6) return (num / 1.0e6).toLocaleString(undefined, {maximumFractionDigits:1}) + "M";
+                // Case: Thousands
+                if (abs >= 1.0e3) return (num / 1.0e3).toLocaleString(undefined, {maximumFractionDigits:1}) + "K";
+                
+                // Case: Small numbers (absolute value < 1)
+                // Show decimals (up to 2 or 3 places) to distinguish bins
+                if (abs < 1) {
+                    return parseFloat(num.toFixed(2)).toString();
+                }
+
+                // Case: Regular numbers (1 to 999)
+                // toLocaleString handles decimals automatically if they exist (e.g. 1.5)
+                return num.toLocaleString(undefined, {maximumFractionDigits: 1});
+            };
+
+            const labels = [];
+            for(let i=0; i<binCount; i++) {
+                const val = min + (i * binSize);
+                labels.push(formatAxisLabel(val));
+            }
+
+            if (chartInstance) chartInstance.destroy();
+
+            const inkColor = '#264653';
+            const tealColor = 'rgba(42, 157, 143, 0.7)';
+            const mustardColor = 'rgba(233, 196, 106, 0.9)';
+
+            chartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Frequency',
+                        data: bins,
+                        backgroundColor: labels.map((l, i) => {
+                            const val = min + (i * binSize);
+                            return (val >= p5 && val <= p95) ? mustardColor : tealColor;
+                        }),
+                        borderColor: inkColor,
+                        borderWidth: 1,
+                        barPercentage: 1.0, 
+                        categoryPercentage: 1.0 
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { 
+                            backgroundColor: inkColor,
+                            titleFont: { family: 'Courier Prime' },
+                            bodyFont: { family: 'Courier Prime' },
+                            displayColors: false,
+                        }
+                    },
+                    scales: {
+                        y: { 
+                            beginAtZero: true, 
+                            display: false 
+                        },
+                        x: { 
+                            grid: { display: false },
+                            ticks: {
+                                color: inkColor,
+                                font: { family: 'Courier Prime', size: 10 },
+                                maxRotation: 45,
+                                minRotation: 0
+                            },
+                            border: { display: true, color: inkColor }
+                        }
+                    },
+                    animation: { duration: 0 }
+                }
+            });
+        }
+
+        init();
+    </script>
+</body>
+</html>

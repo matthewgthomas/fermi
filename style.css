@@ -465,3 +465,13 @@ main {
     transform: rotate(-6deg);
     line-height: 1rem;
 }
+
+/* Footer */
+.app-footer {
+    margin-top: 1.5rem;
+    text-align: center;
+    color: var(--color-ink);
+    opacity: 0.5;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+}

@@ -447,6 +447,14 @@ main {
         height: auto;
         overflow: visible;
     }
+
+    #stats-container {
+        grid-template-columns: 1fr;
+    }
+
+    .stat-box:nth-child(3) {
+        grid-column: auto;
+    }
 }
 
 /* Beta Badge */

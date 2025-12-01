@@ -1,12 +1,12 @@
 # Bayesian Fermi Estimation
 
-![Fermi Logo](assets/logo_synthwave.png)
+![Fermi Logo](assets/fermi_logo.png)
 
 ## Introduction
 
-Bayesian Fermi Estimation is a web-based tool designed to help you make probabilistic estimates using the Fermi method. It allows you to break down complex problems into smaller, manageable variables and calculate the probability distribution of the outcome using Monte Carlo simulations.
+This tool helps you make probabilistic estimates using the [Fermi method](https://en.wikipedia.org/wiki/Fermi_problem). It allows you to break down complex problems into smaller, manageable variables and calculate the probability distribution of the outcome using Monte Carlo simulations.
 
-Whether you're estimating market size, project timelines, or the number of piano tuners in Chicago, this tool provides a rigorous yet accessible way to handle uncertainty.
+Whether you're estimating market size, the potential impacts of policy changes, or the number of piano tuners in Chicago, this tool provides a rigorous yet accessible way to handle uncertainty.
 
 ## Features
 
@@ -32,4 +32,4 @@ Whether you're estimating market size, project timelines, or the number of piano
 
 Click the **Load Example** button to see a classic Fermi problem: *How many piano tuners are there in Chicago?*
 
-You can also load your own example by clicking the **Load Example** button and selecting a JSON file. `examples/england-dwelling-fires.json` shows how to estimate the number of dwelling fires in England per year.
+You can also load your own example by clicking the **Load Example** button and selecting a JSON file. [examples/england-dwelling-fires.json](https://github.com/matthewgthomas/fermi/blob/main/examples/england-dwelling-fires.json) shows how to estimate the number of dwelling fires in England per year.

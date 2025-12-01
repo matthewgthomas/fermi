@@ -448,3 +448,20 @@ main {
         overflow: visible;
     }
 }
+
+/* Beta Badge */
+.beta-badge {
+    position: absolute;
+    top: 0;
+    left: 0;
+    border: 2px solid var(--color-ink);
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    background-color: var(--color-orange);
+    color: white;
+    transform: rotate(-6deg);
+    line-height: 1rem;
+}
